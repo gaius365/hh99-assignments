@@ -72,6 +72,6 @@ class Taxi {
 public class Main {
     public static void main(String[] args) {
         Bus newBus = new Bus(123);
-        Taxi newTaxi = new Taxi(456);
+        Taxi newTaxi = new Taxi(234);
     }
 }

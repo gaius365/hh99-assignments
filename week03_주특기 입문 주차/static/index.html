@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="항해 저장소">
+    <meta property="og:description" content="나만의 항해 블로그를 저장해 봅시다!">
+    <meta property="og:image" content="images/sparta_og.jpeg">
+    <link rel="shortcut icon" href="images/sparta_favicon.png">
+    <title>항해 저장소</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <style>
+
+        body {
+            background-color: snow;
+        }
+
+        .header {
+            width: 100%;
+            height: 400px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("images/sparta_header.png");
+            background-position: center;
+            background-size: cover;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+        }
+
+        .header_container {
+            max-width: 600px;
+            width: 100%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+
+        }
+
+        .header_title {
+            height: 400px;
+            color: white;
+            font-size: 60px;
+            font-weight: bold;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main_wrap {
+            width: 450px;
+
+            padding-top: 20px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .article_wrap {
+            width: 450px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .write_box {
+            width: 100%;
+            max-width: 450px;
+
+            margin: 30px auto 0px auto;
+            padding: 20px 30px 20px 30px;
+            box-shadow: 0px 0px 10px 3px green;
+
+            display: none;
+        }
+
+        .article_box {
+            width: 450px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            margin: 30px auto 0px auto;
+            padding: 20px 30px 20px 30px;
+            box-shadow: 0px 0px 10px 3px lightcoral;
+        }
+
+        .article_time {
+            color: lightcoral;
+        }
+
+        .article_title {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .article_username {
+            color: gray;
+            font-style: italic;
+        }
+
+        .article_content {
+            font-weight: bold;
+        }
+
+        .read_box {
+            width: 390px;
+            margin-top: 10px;
+
+            display: none;
+        }
+
+        .edit_box {
+            width: 390px;
+            margin-top: 10px;
+
+            display: none;
+        }
+
+        .footer {
+            height: 50px;
+        }
+
+        .coral_button {
+            background-color: lightcoral;
+            border-color: lightcoral;
+            color: white;
+        }
+
+        .coral_button:hover {
+            background-color: white;
+            color: lightcoral;
+        }
+
+        .coral_button2 {
+            background-color: white;
+            border-color: lightcoral;
+            color: lightcoral;
+        }
+
+        .coral_button2:hover {
+            background-color: lightcoral;
+            color: white;
+        }
+
+        .green_button {
+            background-color: green;
+            border-color: green;
+            color: white;
+        }
+
+        .green_button:hover {
+            background-color: white;
+            color: green;
+        }
+
+        .green_button2 {
+            background-color: white;
+            border-color: green;
+            color: green;
+        }
+
+        .green_button2:hover {
+            background-color: green;
+            color: white;
+        }
+    </style>
+
+    <script>
+
+        $(document).ready(function () {
+            console.log("Ready!");
+            readArticles();
+        })
+
+        // 전체 조회
+        function readArticles() {
+            $.ajax({
+                type: "GET",
+                url: "/api/articles",
+                success: function (response) {
+                    console.log("read");
+                    for (let i = 0; i < response.length; i++) {
+                        let article = response[i];
+                        let id = article['id'];
+                        let title = article['title'];
+                        let username = article['username'];
+                        let content = article['content'];
+                        let modifiedAt = article['modifiedAt'];
+                        addHTML(id, title, username, content, modifiedAt);
+                    }
+                }
+            });
+        }
+
+        function addHTML(id, title, username, content, modifiedAt) {
+            console.log("add!");
+            let tempHTML = `<div class="article_box">
+                                <h6 class="article_time ms-auto">${modifiedAt}</h6>
+                                <p class="article_title" id="${id}_set_title">${title}</p>
+                                <h6 class="article_username" id="${id}_set_username">by ${username}</h6>
+                                <div class="read_box" id="${id}_read_box">
+                                    <p class="article_content" id="${id}_set_content">${content}</p>
+                                    <button onclick="openEditBox(${id})" type="button" class="coral_button btn">수정/삭제</button>
+                                    <button onclick="closeReadBox(${id})" type="button" class="coral_button2 btn ms-auto">닫기</button>
+                                </div>
+                                <div class="edit_box" id="${id}_edit_box">
+                                    <div class="form-floating mb-3">
+                                        <textarea id="${id}_edit_content" class="form-control" placeholder="content"
+                                                  style="height: 150px"></textarea>
+                                        <label>수정할 내용</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input id="${id}_edit_password" class="form-control" placeholder="password">
+                                        <label>비밀번호</label>
+                                    </div>
+                                    <button onclick="updateArticle(${id})" type="button" class="coral_button btn">수정</button>
+                                    <button onclick="deleteArticle(${id})" type="button" class="coral_button btn">삭제</button>
+                                    <button onclick="closeEditBox(${id})" type="button" class="coral_button2 btn ms-auto">닫기</button>
+                                </div>
+                                <button onclick="openReadBox(${id})" type="button" class="coral_button btn ms-auto" id="${id}_read_button">자세히 보기
+                                </button>
+                            </div>`;
+            $('#article_wrap').append(tempHTML);
+        }
+
+        // 글 작성 버튼 동작
+        function openWriteBox() {
+            $('#write_box').show();
+            $('#write_button').hide();
+        }
+
+        function closeWriteBox() {
+            $('#write_box').hide();
+            $('#write_button').show();
+        }
+
+        // 글 작성
+        function createArticle() {
+            let username = $('#write_username').val();
+            let password = $('#write_password').val();
+            let title = $('#write_title').val();
+            let content = $('#write_content').val();
+
+            if (isValidContent(content) == false) {
+                return;
+            }
+
+            let data = {"username": username, "password": password, "title": title, "content": content};
+
+            $.ajax({
+                type: "POST",
+                url: "/api/articles",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert("글이 작성되었습니다.");
+                    window.location.reload();
+                }
+            });
+        }
+
+        function isValidContent(content) {
+            if (content == "") {
+                alert("내용을 입력해주세요");
+                return false;
+            }
+            if (content.trim().length > 140) {
+                alert("공백 포함 140자 이하로 입력해주세요");
+                return false;
+            }
+            return true;
+        }
+
+        // 자세히 보기 버튼 동작
+        function openReadBox(id) {
+            $(`#${id}_read_box`).show();
+            $(`#${id}_read_button`).hide();
+        }
+
+        function closeReadBox(id) {
+            $(`#${id}_read_box`).hide();
+            $(`#${id}_read_button`).show();
+        }
+
+        // 글 수정 버튼 동작
+        function openEditBox(id) {
+            $(`#${id}_edit_box`).show();
+            $(`#${id}_edit_content`).val($(`#${id}_set_content`).text());
+            $(`#${id}_read_box`).hide();
+        }
+
+        function closeEditBox(id) {
+            $(`#${id}_edit_box`).hide();
+            $(`#${id}_read_box`).show();
+        }
+
+        // 비밀번호 확인
+        function checkPassword(id) {
+            let typedPassword = $(`#${id}_edit_password`).val();
+            let correctPassword = "";
+            $.ajax({
+                type: "GET",
+                url: `/api/articles/${id}`,
+                async: false,
+                success: function (response) {
+                    correctPassword = response;
+                }
+            });
+
+            if (typedPassword != correctPassword) return false;
+            else return true;
+        }
+
+        // 글 수정
+        function updateArticle(id) {
+            let username = $(`#${id}_set_username`).text();
+            let password = $(`#${id}_edit_password`).val();
+            let title = $(`#${id}_set_title`).text();
+            let content = $(`#${id}_edit_content`).val();
+
+            if (checkPassword(`${id}`) == false) {
+                alert("비밀번호를 확인하세요.")
+                return;
+            }
+
+            let data = {"username": username, "password": password, "title": title, "content": content};
+
+            $.ajax({
+                type: "PUT",
+                url: `/api/articles/${id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert("글이 수정되었습니다.");
+                    window.location.reload();
+                }
+            });
+        }
+
+        // 글 삭제
+        function deleteArticle(id) {
+            if (checkPassword(`${id}`) == false) {
+                alert("비밀번호를 확인하세요.")
+                return;
+            }
+
+            $.ajax({
+                type: "DELETE",
+                url: `/api/articles/${id}`,
+                success: function (response) {
+                    alert("글이 삭제되었습니다.");
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+
+</head>
+<body>
+
+<header class="header">
+    <div class="header_container">
+        <p class="header_title">항해 저장소</p>
+    </div>
+</header>
+
+<main class="main">
+    <div class="main_wrap">
+        <button onclick="openWriteBox()" type="button" class="green_button2 btn ms-auto" id="write_button">글 작성</button>
+        <div class="write_box" id="write_box">
+            <div class="form-floating mb-3">
+                <input id="write_username" class="form-control" placeholder="username">
+                <label>작성자명</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="write_password" class="form-control" placeholder="password">
+                <label>비밀번호</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="write_title" class="form-control" placeholder="title">
+                <label>글 제목</label>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea id="write_content" class="form-control" placeholder="content"
+                          style="height: 150px"></textarea>
+                <label>글 내용</label>
+            </div>
+            <div>
+                <button onclick="createArticle()" type="button" class="green_button btn">작성하기</button>
+                <button onclick="closeWriteBox()" type="button" class="green_button2 btn">취소</button>
+            </div>
+        </div>
+        <div class="article_wrap" id="article_wrap">
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+</footer>
+
+</body>
+</html>

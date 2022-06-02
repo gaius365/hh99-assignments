@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="항해 저장소">
+    <meta property="og:description" content="나만의 항해 블로그를 저장해 봅시다!">
+    <meta property="og:image" content="images/sparta_og.jpeg">
+    <link rel="shortcut icon" href="images/sparta_favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <title>항해 저장소</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: snow;
+        }
+
+        .header {
+            width: 100%;
+            height: 400px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("https://static.spartacodingclub.kr/media/main_carousel/6n2syiynb59ib9ev.png");
+            background-position: center;
+            background-size: cover;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+
+            cursor: pointer;
+        }
+
+        .article_wrap {
+            width: 600px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .article_box {
+            width: 600px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            margin: 30px auto 0px auto;
+            padding: 20px 30px 20px 30px;
+            box-shadow: 0px 0px 3px 1px lightcoral;
+            background-color: white;
+
+            cursor: pointer;
+        }
+
+        .article_time {
+            color: lightcoral;
+        }
+
+        .article_title {
+            color: brown;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .article_username {
+            color: gray;
+            font-style: italic;
+        }
+
+        .article_content {
+            color: indianred;
+            font-weight: bold;
+        }
+
+        .coral_button {
+            background-color: lightcoral;
+            border-color: lightcoral;
+            color: white;
+        }
+
+        .coral_button:hover {
+            background-color: white;
+            color: lightcoral;
+        }
+
+        .coral_button2 {
+            background-color: white;
+            border-color: lightcoral;
+            color: lightcoral;
+        }
+
+        .coral_button2:hover {
+            background-color: lightcoral;
+            color: white;
+        }
+
+        .loginBox {
+            display: none;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            setHome();
+            readArticles();
+        })
+
+        function setHome() {
+            $.ajax({
+                type: "POST",
+                url: "/user/userinfo",
+                success: function (response) {
+                },
+                error: function () {
+                    $('#loginBox').show();
+                    $('#writeBox').hide();
+                }
+            });
+        }
+
+        function readArticles() {
+            $.ajax({
+                type: "GET",
+                url: "/api/articles",
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let article = response[i];
+                        let id = article['id'];
+                        let username = article['username'];
+                        let title = article['title'];
+                        let content = article['content'];
+                        let modifiedAt = article['modifiedAt'];
+                        addHTML(id, username, title, content, modifiedAt);
+                    }
+                }
+            });
+        }
+
+        function addHTML(id, username, title, content, modifiedAt) {
+            let tempHTML = `<div id="article_box" class="article_box" onclick="enterArticle(${id})">
+                                <h6 class="article_time ms-auto">${modifiedAt}</h6>
+                                <p class="article_title">${title}</p>
+                                <h6 class="article_username">by ${username}</h6>
+                                <br>
+                                <h4 class="article_content">${content}</h4>
+                            </div>`
+            $('#article_wrap').append(tempHTML);
+        }
+
+        function enterArticle(id) {
+            $.ajax({
+                type: "GET",
+                url: "/detail",
+                success: function(response) {
+                    window.location.replace(`/detail?id=${id}`);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<header onclick="location.href='/'" class="header">
+    <p class="header_title">항해 저장소</p>
+</header>
+<main class="main">
+    <div class="wrap">
+        <div class="button_wrap">
+            <div class="loginBox" id="loginBox">
+                <button id="login-btn" onclick="location.href='/user/login'" type="button"
+                        class="coral_button2 btn ms-auto">로그인
+                </button>
+                <button id="signup-btn" onclick="location.href='/user/signup'" type="button"
+                        class="coral_button2 btn ms-auto">회원가입
+                </button>
+            </div>
+            <div class="writeBox" id="writeBox">
+                <button id="write-btn" onclick="location.href='/write'" type="button" class="coral_button btn ms-auto">글
+                    작성
+                </button>
+                <button id="logout-btn" onclick="location.href='/user/logout'" type="button"
+                        class="coral_button2 btn ms-auto">로그아웃
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="wrap">
+        <div class="article_wrap" id="article_wrap">
+        </div>
+    </div>
+
+    </div>
+</main>
+<footer class="footer"></footer>
+</body>
+</html>

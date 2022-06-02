@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="항해 저장소">
+    <meta property="og:description" content="나만의 항해 블로그를 저장해 봅시다!">
+    <meta property="og:image" content="/images/sparta_og.jpeg">
+    <link rel="shortcut icon" href="/images/sparta_favicon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>항해 저장소</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: snow;
+        }
+
+        .header {
+            width: 100%;
+            height: 400px;
+
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("https://static.spartacodingclub.kr/media/main_carousel/6n2syiynb59ib9ev.png");
+            background-position: center;
+            background-size: cover;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+
+            cursor: pointer;
+        }
+
+        .article_wrap {
+            width: 600px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .article_box {
+            width: 600px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            margin: 30px auto 0px auto;
+            padding: 20px 30px 20px 30px;
+            box-shadow: 0px 0px 3px 1px lightcoral;
+            background-color: white;
+        }
+
+        .article_time {
+            color: lightcoral;
+        }
+
+        .article_title {
+            color: brown;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .article_username {
+            color: gray;
+            font-style: italic;
+        }
+
+        .article_content {
+            color: indianred;
+            font-weight: bold;
+        }
+
+        .hidden_id {
+            color: white;
+        }
+
+        .comment_box {
+            width: 600px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            margin: 30px auto 0px auto;
+            padding: 20px 30px 20px 30px;
+            box-shadow: 0px 0px 3px 1px #82dd9b;
+            background-color: white;
+
+            cursor: pointer;
+        }
+
+        .comment_time {
+            color: #82dd9b;
+        }
+
+        .comment_content {
+            color: #358931;
+            font-weight: bold;
+        }
+
+        .update_box {
+            width: 600px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            margin: 30px auto 0px auto;
+            padding: 20px 30px 20px 30px;
+            box-shadow: 0px 0px 3px 1px green;
+            background-color: white;
+
+            display: none;
+        }
+
+        .coral_button {
+            background-color: lightcoral;
+            border-color: lightcoral;
+            color: white;
+        }
+
+        .coral_button:hover {
+            background-color: white;
+            color: lightcoral;
+        }
+
+        .coral_button2 {
+            background-color: white;
+            border-color: lightcoral;
+            color: lightcoral;
+        }
+
+        .coral_button2:hover {
+            background-color: lightcoral;
+            color: white;
+        }
+
+        .green_button {
+            background-color: green;
+            border-color: green;
+            color: white;
+        }
+
+        .green_button:hover {
+            background-color: white;
+            color: green;
+        }
+
+        .green_button2 {
+            background-color: white;
+            border-color: green;
+            color: green;
+        }
+
+        .green_button2:hover {
+            background-color: green;
+            color: white;
+        }
+
+        .loginBox {
+            display: none;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            setHome();
+            readArticle();
+            readComments();
+        })
+
+        function setHome() {
+            $.ajax({
+                type: "POST",
+                url: "/user/userinfo",
+                success: function (response) {
+                },
+                error: function () {
+                    $('#loginBox').show();
+                    $('#writeBox').hide();
+                }
+            });
+        }
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        function readArticle() {
+            var articleId = getParameterByName("id");
+
+            $.ajax({
+                type: "GET",
+                url: `/api/articles/${articleId}`,
+                success: function (response){
+                    let username = response['username'];
+                    let title = response['title'];
+                    let content = response['content'];
+                    let modifiedAt = response['modifiedAt'];
+
+                    let tempHTML = `<div id="article_box" class="article_box"">
+                                        <h6 class="article_time ms-auto">${modifiedAt}</h6>
+                                        <p class="article_title">${title}</p>
+                                        <h6 class="article_username">by ${username}</h6>
+                                        <br>
+                                        <h5 class="article_content">${content}</h5>
+                                    </div>`
+                    $('#article_wrap').append(tempHTML);
+                }
+            });
+        }
+
+        function readComments() {
+            var articleId = getParameterByName("id");
+
+            $.ajax({
+                type: "GET",
+                url: `/api/comments/${articleId}`,
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let commentList = response[i];
+                        let id = commentList['id'];
+                        let username = commentList['username'];
+                        let comment = commentList['comment'];
+                        let modifiedAt = commentList['modifiedAt'];
+                        addHTML(id, username, comment, modifiedAt);
+                    }
+                }
+            });
+        }
+
+        function addHTML(id, username, comment, modifiedAt) {
+            let tempHTML = `<div onclick="open_update_box(${id})" id="comment_box_${id}" class="comment_box">
+                                <h6 class="comment_time ms-auto">${modifiedAt}</h6>
+                                <h6 id="username_${id}" class="article_username">${username}</h6>
+                                <h6 class="hidden_id">${id}</h6>
+                                <h4 id="comment_${id}" class="comment_content">${comment}</h4>
+                            </div>
+                            <div id="update_box_${id}" class="update_box">
+                                <div class="input-group mb-3">
+                                    <input onclick="usercheck()" id="new_comment_${id}" type="text" class="form-control" placeholder="${comment}">
+                                    <button onclick="updateComment(${id})" class="btn green_button ms-auto" type="button">수정</button>
+                                </div>
+                                <div>
+                                    <button onclick="deleteComment(${id})" class="btn green_button2 ms-auto" type="button">삭제</button>
+                                    <button onclick="close_update_box(${id})" class="btn green_button2 ms-auto" type="button">취소</button>
+                                </div>
+                            </div>`
+            $('#comment_wrap').append(tempHTML);
+        }
+
+        function usercheck() {
+            var checkedUser;
+            $.ajax({
+                type: "POST",
+                url: "/user/userinfo",
+                async: false,
+                success: function (response) {
+                    checkedUser = response;
+                },
+                error: function () {
+                    alert("로그인이 필요합니다.");
+                    return false;
+                }
+            });
+            return checkedUser;
+        }
+
+        function writeComment() {
+            usercheck();
+            var articleId = getParameterByName("id");
+            let comment = $('#comment').val();
+            if (isValidContents(comment) == false) {
+                return;
+            }
+            let data = {'articleId': articleId, 'username': "", 'comment': comment};
+
+            $.ajax({
+                type: "POST",
+                url: `/api/comments/${articleId}`,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+
+        function isValidContents(content) {
+            if (content == '') {
+                alert('내용을 입력해주세요.');
+                return false;
+            }
+            if (content.trim().length > 140) {
+                alert("내용을 공백 포함 140자 이하로 입력해주세요.");
+                return false;
+            }
+            return true;
+        }
+
+        function updateComment(id) {
+            let username = usercheck();
+            if (username == $(`#username_${id}`).text()) {
+                var articleId = getParameterByName("id");
+                let comment = $(`#new_comment_${id}`).val();
+                if (isValidContents(comment) == false) {
+                    return;
+                }
+                let data = {'articleId': articleId, 'username': "", 'comment': comment};
+
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/comments/${id}`,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        alert("댓글이 수정되었습니다.");
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+
+        function deleteComment(id) {
+            let username = usercheck();
+            if (username == $(`#username_${id}`).text()) {
+                $.ajax({
+                    type: "DELETE",
+                    url: `/api/comments/${id}`,
+                    success: function (response) {
+                        alert("댓글이 삭제되었습니다.");
+                        window.location.reload();
+                    }
+                })
+            }
+        }
+
+        function open_update_box(id) {
+            let username = usercheck();
+            if (username == $(`#username_${id}`).text()) {
+                $(`#comment_box_${id}`).hide();
+                $(`#update_box_${id}`).show();
+            }
+        }
+
+        function close_update_box(id) {
+            $(`#comment_box_${id}`).show();
+            $(`#update_box_${id}`).hide();
+        }
+    </script>
+</head>
+<body>
+<header onclick="location.href='/'" class="header">
+    <p class="header_title">항해 저장소</p>
+</header>
+<main class="main">
+    <div class="wrap">
+        <div class="button_wrap">
+            <div class="loginBox" id="loginBox">
+                <button id="login-btn" onclick="location.href='/user/login'" type="button"
+                        class="coral_button2 btn ms-auto">로그인
+                </button>
+                <button id="signup-btn" onclick="location.href='/user/signup'" type="button"
+                        class="coral_button2 btn ms-auto">회원가입
+                </button>
+            </div>
+            <div class="writeBox" id="writeBox">
+                <button id="logout-btn" onclick="location.href='/user/logout'" type="button"
+                        class="coral_button2 btn ms-auto">로그아웃
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="wrap">
+        <div class="article_wrap" id="article_wrap">
+        </div>
+    </div>
+    <div class="wrap">
+        <div class="comment_wrap" id="comment_wrap">
+            <div class="input-group mb-3">
+                <input onclick="usercheck()" id="comment" type="text" class="form-control" placeholder="댓글 작성하기">
+                <button onclick="writeComment()" class="btn coral_button" type="button">작성</button>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="footer"></footer>
+</body>
+</html>
